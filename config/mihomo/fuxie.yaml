@@ -1,3 +1,20 @@
+# 注意规则在满足自己需求情况下，尽量做到精简，不要过度复杂，以免影响性能。
+# 机场订阅
+proxy-providers:
+  Airport1:
+    url: "GanQuanRu"
+    type: http
+    interval: 86400
+    health-check:
+      enable: true
+      url: 11111111111111111111111111
+      interval: 300
+    proxy: 直连
+
+# 节点信息
+proxies:
+  - {name: 直连, type: direct}
+
 # 全局配置 
 port: 7890
 socks-port: 7891
@@ -21,27 +38,27 @@ profile:
   store-fake-ip: true
 
 # 控制面板
-external-controller: 0.0.0.0:9090
-secret: ""
-external-ui: "/etc/mihomo/run/ui"
-external-ui-name: zashboard
-external-ui-url: "https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+# external-controller: 0.0.0.0:9090
+# secret: ""
+# external-ui: "/etc/nikki/run"
+# external-ui-name: zashboard
+# external-ui-url: "https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
 
 # 嗅探
-sniffer:
-  enable: true
-  sniff:
-    HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true
-    TLS:
-      ports: [443, 8443]
-    QUIC:
-      ports: [443, 8443]
-  force-domain:
-    - "+.v2ex.com"
-  skip-domain:
-    - "rule-set:private_domain,cn_domain"
+# sniffer:
+#   enable: true
+#   sniff:
+#     HTTP:
+#       ports: [80, 8080-8880]
+#       override-destination: true
+#     TLS:
+#       ports: [443, 8443]
+#     QUIC:
+#       ports: [443, 8443]
+#   force-domain:
+#     - "+.v2ex.com"
+#   skip-domain:
+#     - "+.baidu.com"
 
 # 入站  
 tun:
@@ -64,8 +81,8 @@ dns:
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - "rule-set:private_domain,cn_domain"
-    - "+.services.googleapis.cn"
-    - "+.xn--ngstr-lra8j.com"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
     - "time.*.com"
   default-nameserver:
     - 223.5.5.5
@@ -78,13 +95,13 @@ dns:
  
 # 出站策略
 # 注意锚点必须放在引用的上方，可以集中把锚点全部放yaml的顶部。
-pr: &pr {type: select, proxies: [🚀 默认代理, ♻️ 香港自动, ♻️ 亚洲自动, ♻️ 美国自动, ♻️ 其他自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, ot 其他节点, 🌐 全部节点, 直连]}
+pr: &pr {type: select, proxies: [🚀 默认代理, ♻️ 香港自动, ♻️ 亚洲自动, ♻️ 美国自动, ♻️ 其他自动, ♻️ 自动选择, 🇭🇰 香港节点, Asia 亚洲节点, 🇺🇲 美国节点, ot 其他节点, 🌐 全部节点, 🎯 直连]}
 proxy-groups:
-  - {name: 🚀 默认代理, type: select, proxies: [♻️ 香港自动, ♻️ 亚洲自动, ♻️ 美国自动, ♻️ 其他自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, ot 其他节点, 🌐 全部节点, 直连]}
+  - {name: 🚀 默认代理, type: select, proxies: [♻️ 香港自动, ♻️ 亚洲自动, ♻️ 美国自动, ♻️ 其他自动, ♻️ 自动选择, 🇭🇰 香港节点, Asia 亚洲节点, 🇺🇲 美国节点, ot 其他节点, 🌐 全部节点, 🎯 直连]}
   - {name: 🤖 AI平台, type: select, proxies: [♻️ 亚洲自动, ♻️ 美国自动, ♻️ 其他自动,]}
   - {name: 📲 社交聊天, <<: *pr}
   - {name: 🎥 国外媒体, <<: *pr}
-  - {name: 🎯 直连, type: select, proxies: [直连, 🚀 默认代理]}
+  - {name: 🎯 直连, type: select, proxies: [DIRECT, ♻️ 自动选择]}
   - {name: 🐟 漏网之鱼, <<: *pr}
   - {name: 🇭🇰 香港节点, type: select, include-all: true, filter: "(?i)港|hk|hongkong|hong kong"}
   - {name: Asia 亚洲节点, type: select, include-all: true, filter: "(?i)日|韩|新|台|坡|狮|jp|japan"}
@@ -100,8 +117,7 @@ proxy-groups:
 # 规则匹配
 # 此规则部分没有做防泄露处理，因为弊严重大于利！
 rules:
-  - DOMAIN-SUFFIX,qichiyu.com,🚀 默认代理
-  - RULE-SET,private_domain,直连
+  - RULE-SET,private_domain,🎯 直连
   - RULE-SET,proxylite,🚀 默认代理
   - RULE-SET,ai,🤖 AI平台
   - RULE-SET,telegram_domain,📲 社交聊天
